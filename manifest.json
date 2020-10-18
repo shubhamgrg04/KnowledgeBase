@@ -1,0 +1,33 @@
+{
+    "name" : "Highlighter",
+    "version" : "1.0",
+    "description": "Store highlighted content on web locally",
+    "manifest_version": 2,
+
+    "browser_action": {
+        "default_icon": {
+            "128": "images/128.png"
+        },
+        "default_popup": "popup.html"
+    },
+
+    "background": {
+        "scripts" : ["background.js"]
+    },
+
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js":["scripts/jquery-2.1.3.min.js", "scripts/utils/storage.js", "scripts/utils/highlight.js", "scripts/loadAll.js"],
+            "css": [],
+            "all_frames": true
+        }
+    ],
+
+    "permissions": [
+        "tabs",
+        "contextMenus",
+        "storage",
+        "<all_urls>"
+    ]
+}
