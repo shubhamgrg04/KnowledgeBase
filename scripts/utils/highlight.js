@@ -87,6 +87,7 @@ function highlight(selString, container, selection, color, highlightIndex) {
     content = content
       .replace(startRe, replacements.start)
       .replace(endRe, replacements.end);
+    console.log(content);
     parent.html(content);
   } else {
     startRe = new RegExp(escapeRegex(DELIMITERS.start), "g");
@@ -103,15 +104,15 @@ function highlight(selString, container, selection, color, highlightIndex) {
     parent.html(content.replace(sanitizeRe, ""));
   }
 
-  //   // Step 4:
-  //   if (selection.removeAllRanges) selection.removeAllRanges();
+  // Step 4:
+  // if (selection.removeAllRanges) selection.removeAllRanges();
 
-  //   // Attach mouse hover event listeners to display tools when hovering a highlight
-  //   parent.find(`.${HIGHLIGHT_CLASS}`).each((i, el) => {
-  //     el.addEventListener("mouseenter", onHighlightMouseEnterOrClick);
-  //     el.addEventListener("click", onHighlightMouseEnterOrClick);
-  //     el.addEventListener("mouseleave", onHighlightMouseLeave);
-  //   });
+  // // Attach mouse hover event listeners to display tools when hovering a highlight
+  // parent.find(`.${HIGHLIGHT_CLASS}`).each((i, el) => {
+  //   el.addEventListener("mouseenter", onHighlightMouseEnterOrClick);
+  //   el.addEventListener("click", onHighlightMouseEnterOrClick);
+  //   el.addEventListener("mouseleave", onHighlightMouseLeave);
+  // });
 
   return true; // No errors. 'undefined' is returned by default if any error occurs during this method's execution, like if 'content.replace' fails by 'content' being 'undefined'
 }

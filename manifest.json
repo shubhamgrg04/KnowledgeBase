@@ -1,18 +1,20 @@
 {
-    "name" : "Highlighter",
+    "name" : "Surfboard",
     "version" : "1.0",
-    "description": "Store highlighted content on web locally",
+    "description": "Store highlighted content on web",
     "manifest_version": 2,
 
     "browser_action": {
         "default_icon": {
+            "16": "images/16.png",
+            "32": "images/32.png",
             "128": "images/128.png"
         },
         "default_popup": "popup.html"
     },
 
     "background": {
-        "scripts" : ["background.js"]
+        "scripts" : ["scripts/firebase-app-7.24.0.js", "scripts/firebase-firestore-7.24.0.js", "config.js", "background.js"]
     },
 
     "content_scripts": [
@@ -26,6 +28,7 @@
 
     "permissions": [
         "tabs",
+        "notifications",
         "contextMenus",
         "storage",
         "<all_urls>"

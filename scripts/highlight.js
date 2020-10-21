@@ -7,7 +7,6 @@
 
   if (selectionString) {
     // If there is text selected
-
     let container = selection.getRangeAt(0).commonAncestorContainer;
 
     // Sometimes the element will only be text. Get the parent in that case
