@@ -1,5 +1,5 @@
 <img src="./images/logo.png" height="128"  >
-</br></br>
+</br>
 
 # Surfboard
 
@@ -13,7 +13,7 @@
 
 ## Philosophy
 
-I have written more about the origins of Surboard [here](https://www.shubhamgrg.com/surfboard).
+I have written more about the origins of Surfboard [here](https://www.shubhamgrg.com/surfboard).
 
 ## Roadmap
 
