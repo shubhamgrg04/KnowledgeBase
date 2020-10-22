@@ -1,5 +1,4 @@
 <img src="./images/logo.png" height="128"  >
-</br>
 
 # Surfboard
 
