@@ -5,14 +5,10 @@ firebase.initializeApp({
   projectId: config.FIREBASE_PROJECT_ID,
 });
 var db = firebase.firestore();
-db.settings({
-  cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-});
-db.enablePersistence();
 
 chrome.runtime.onInstalled.addListener(function () {
   chrome.contextMenus.create({
-    title: "Highlight This",
+    title: "Highlight",
     onclick: highlightTextFromContext,
     contexts: ["selection"],
   });
@@ -40,9 +36,9 @@ function citeText() {
   chrome.notifications.create(options);
 }
 
-// function removeHighlights() {
-//   chrome.tabs.executeScript({ file: "contentScripts/removeHighlights.js" });
-// }
+function removeHighlights() {
+  chrome.tabs.executeScript({ file: "contentScripts/removeHighlights.js" });
+}
 
 function highlightTextFromContext() {
   highlightText();
@@ -56,57 +52,58 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   switch (request.action) {
     case "addHighlight":
       const payload = request.payload;
-      db.collection("highlights")
-        .doc(payload.url.replaceAll("/", "|"))
-        .update({
-          selections: firebase.firestore.FieldValue.arrayUnion(
-            JSON.stringify({
-              anchorNode: payload.anchorNode,
-              anchorOffset: payload.anchorOffset,
-              container: payload.container,
-              focusNode: payload.focusNode,
-              focusOffset: payload.focusOffset,
-              string: payload.string,
-              tags: ["lite", "dark"],
-            })
-          ),
-        })
-        .then(function () {
-          console.log("Document successfully written!");
-        })
-        .catch(function (error) {
-          console.error("Error writing document: ", error);
-        });
-      console.log(payload);
+      if (!payload) return;
+      addHighlight(payload);
+      // return true to use sendResponse asynchronously
       return true;
     case "getHighlights":
       const url = request.payload;
-      console.log(url.replaceAll("/", "|"));
-      var docRef = db.collection("highlights").doc(url.replaceAll("/", "|"));
-      docRef
-        .get()
-        .then(function (doc) {
-          if (doc.exists) {
-            console.log("Document data:", doc.data());
-            sendResponse(doc.data());
-          } else {
-            // doc.data() will be undefined in this case
-            sendResponse(doc.data());
-            console.log("No such document!");
-          }
-        })
-        .catch(function (error) {
-          console.log("Error getting document:", error);
-        });
+      getHighlights(url, sendResponse);
       return true;
-    // db.collection("highlights")
-    //   .get()
-    //   .then(function (querySnapshot) {
-    //     querySnapshot.forEach(function (doc) {
-    //       // doc.data() is never undefined for query doc snapshots
-    //       console.log(doc.id, " => ", doc.data());
-    //     });
-    //   });
   }
   return;
 });
+
+async function addHighlight(payload) {
+  const highlight = {
+    anchorNode: payload.anchorNode,
+    anchorOffset: payload.anchorOffset,
+    container: payload.container,
+    focusNode: payload.focusNode,
+    focusOffset: payload.focusOffset,
+    string: payload.string,
+    tags: ["lite", "dark"],
+  };
+  var docRef = db
+    .collection("highlights")
+    .doc(payload.url.replaceAll("/", "|"));
+  var doc = await docRef.get();
+
+  // add highlight if url already
+  // constains hightlights, else
+  // create a new doc
+  if (doc.exists) {
+    await docRef.update({
+      selections: firebase.firestore.FieldValue.arrayUnion(
+        JSON.stringify(highlight)
+      ),
+    });
+  } else {
+    await docRef.set({
+      selections: [JSON.stringify(highlight)],
+    });
+  }
+}
+
+async function getHighlights(url, sendResponse) {
+  var docRef = db.collection("highlights").doc(url.replaceAll("/", "|"));
+  console.log(url.replaceAll("/", "|"));
+  var doc = await docRef.get();
+  console.log(doc);
+  if (doc.exists) {
+    console.log(doc.data());
+    sendResponse(doc.data());
+  } else {
+    sendResponse({ selections: [] });
+  }
+}

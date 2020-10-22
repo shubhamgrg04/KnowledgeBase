@@ -17,5 +17,6 @@ I have written more about the origins of Surfboard [here](https://www.shubhamgrg
 ## Roadmap
 
 - Cite lines in articles using Chrome's [Text Fragments](https://web.dev/text-fragments/).
+- Add caching using localStorage
 - Analytics of personal browsing behaviour
 - Shareable highlighted web pages using firebase functions.

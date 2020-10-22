@@ -3,25 +3,6 @@
 var STORE_FORMAT_VERSION = chrome.runtime.getManifest().version;
 
 function store(selection, container, url, color, callback) {
-  // chrome.storage.local.get({ highlights: {} }, (result) => {
-  //   const highlights = result.highlights;
-
-  //   if (!highlights[url]) highlights[url] = [];
-
-  //   const count = highlights[url].push({
-  //     version: STORE_FORMAT_VERSION,
-  //     string: selection.toString(),
-  //     container: getQuery(container),
-  //     anchorNode: getQuery(selection.anchorNode),
-  //     anchorOffset: selection.anchorOffset,
-  //     focusNode: getQuery(selection.focusNode),
-  //     focusOffset: selection.focusOffset,
-  //     color: color,
-  //   });
-  //   chrome.storage.local.set({ highlights });
-
-  //   if (callback) callback(count - 1);
-  // });
   const data = {
     version: STORE_FORMAT_VERSION,
     url: url,
@@ -34,40 +15,23 @@ function store(selection, container, url, color, callback) {
     color: color,
   };
   chrome.runtime.sendMessage({ action: "addHighlight", payload: data });
+  if (callback) callback(0);
 }
 
 function loadAll(url) {
-  // chrome.storage.local.get({ highlights: {} }, function (result) {
-  //   let highlights = [];
-  //   highlights = highlights.concat(result.highlights[url] || []);
-
-  //   for (let i = 0; highlights && i < highlights.length; i++) {
-  //     load(highlights[i], i);
-  //   }
-  // });
   chrome.runtime.sendMessage(
     { action: "getHighlights", payload: url },
     (result) => {
-      console.log(result);
       let selections = result.selections;
-      if (selections) console.log(selections.length);
       for (let i = 0; selections && i < selections.length; i++) {
         load(JSON.parse(selections[i]), i);
       }
-
-      // let highlights = [];
-      //   highlights = highlights.concat(result.highlights[url] || []);
-
-      //   for (let i = 0; highlights && i < highlights.length; i++) {
-      //     load(highlights[i], i);
-      //   }
     }
   );
 }
 
 function load(highlightVal, highlightIndex, noErrorTracking) {
   // noErrorTracking is optional
-  console.log(highlightVal);
   const selection = {
     anchorNode: elementFromQuery(highlightVal.anchorNode),
     anchorOffset: highlightVal.anchorOffset,
@@ -92,7 +56,6 @@ function load(highlightVal, highlightIndex, noErrorTracking) {
       "yellow",
       highlightIndex
     );
-    console.log("status was : ", success);
     if (!noErrorTracking && !success) {
       addHighlightError(highlightVal, highlightIndex);
     }

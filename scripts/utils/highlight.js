@@ -87,7 +87,6 @@ function highlight(selString, container, selection, color, highlightIndex) {
     content = content
       .replace(startRe, replacements.start)
       .replace(endRe, replacements.end);
-    console.log(content);
     parent.html(content);
   } else {
     startRe = new RegExp(escapeRegex(DELIMITERS.start), "g");
