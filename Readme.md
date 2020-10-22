@@ -1,6 +1,7 @@
-# Surfboard
+<img src="./images/logo.png" height="128"  >
+</br></br>
 
-<img src="./images/logo.png" height="128" align="right">
+# Surfboard
 
 > Surfboard is a chrome extension to help organise and highlight web content, using firestore for storage.
 
