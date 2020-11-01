@@ -48,17 +48,45 @@ function citeTextFromContext() {
   citeText();
 }
 
+async function trackEvent(name, payload) {
+  await fetch(
+    `https://www.google-analytics.com/mp/collect?measurement_id=${config.GA_MEASUREMENT_ID}&api_secret=${config.GA_API_SECRET}`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        client_id: "XXXXXXXXXX.YYYYYYYYYY",
+        events: [
+          {
+            name: name,
+            params: payload,
+          },
+        ],
+      }),
+    }
+  );
+}
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   switch (request.action) {
     case "addHighlight":
       const payload = request.payload;
       if (!payload) return;
+      trackEvent("add_highlight", {
+        page_location: payload.url,
+        page_domain: webpage.domain,
+      });
       addHighlight(payload);
       // return true to use sendResponse asynchronously
       return true;
     case "getHighlights":
-      const url = request.payload;
-      getHighlights(url, sendResponse);
+      const webpage = request.payload;
+      trackEvent("page_view", {
+        page_title: webpage.title,
+        page_location: webpage.href,
+        page_path: webpage.pathName,
+        page_domain: webpage.hostName,
+      });
+      getHighlights(webpage.href, sendResponse);
       return true;
   }
   return;
@@ -80,7 +108,7 @@ async function addHighlight(payload) {
   var doc = await docRef.get();
 
   // add highlight if url already
-  // constains hightlights, else
+  // contains hightlights, else
   // create a new doc
   if (doc.exists) {
     await docRef.update({

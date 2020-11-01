@@ -2,10 +2,11 @@
 
 var STORE_FORMAT_VERSION = chrome.runtime.getManifest().version;
 
-function store(selection, container, url, color, callback) {
+function store(selection, container, url, domain, color, callback) {
   const data = {
     version: STORE_FORMAT_VERSION,
     url: url,
+    domain: domain,
     string: selection.toString(),
     container: getQuery(container),
     anchorNode: getQuery(selection.anchorNode),
@@ -18,9 +19,9 @@ function store(selection, container, url, color, callback) {
   if (callback) callback(0);
 }
 
-function loadAll(url) {
+function loadAll(webpage) {
   chrome.runtime.sendMessage(
-    { action: "getHighlights", payload: url },
+    { action: "getHighlights", payload: webpage },
     (result) => {
       let selections = result.selections;
       for (let i = 0; selections && i < selections.length; i++) {

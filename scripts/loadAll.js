@@ -1,5 +1,10 @@
 "use strict";
 
 $(document).ready(function () {
-  loadAll(window.location.href);
+  loadAll({
+    hostName: window.location.hostname,
+    pathName: window.location.pathname,
+    href: window.location.href,
+    title: document.title,
+  });
 });
